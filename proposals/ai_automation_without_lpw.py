@@ -5,6 +5,16 @@ from pdf_generator import generate_proposal
 def render_ai_automation_without_lpw_form():
     st.header("AI Automation without LPW")
     
+    # Add currency selector
+    currency = st.selectbox(
+        "Select Currency",
+        ["USD", "INR", "EUR"],
+        key="ai_without_lpw_currency"
+    )
+    
+    # Currency symbol based on selection
+    currency_symbol = "₹" if currency == "INR" else ("€" if currency == "EUR" else "$")
+    
     # Client Information
     st.subheader("Client Information")
     col1, col2 = st.columns(2)
@@ -24,19 +34,24 @@ def render_ai_automation_without_lpw_form():
     st.subheader("Project Pricing")
     col1, col2 = st.columns(2)
     with col1:
-        ai_calling_price = st.number_input("AI Calling", min_value=0.0, step=0.01)
-        crm_price = st.number_input("CRM Automations", min_value=0.0, step=0.01)
+        ai_calling_price = st.number_input(f"AI Calling ({currency_symbol})", 
+            min_value=0.0, step=100.0, format="%.2f")
+        crm_price = st.number_input(f"CRM Automations ({currency_symbol})", 
+            min_value=0.0, step=100.0, format="%.2f")
     with col2:
-        manychat_price = st.number_input("ManyChat & Make Automation", min_value=0.0, step=0.01)
-        additional_price = st.number_input("Additional Features & Enhancements", min_value=0.0, step=0.01)
+        manychat_price = st.number_input(f"ManyChat & Make Automation ({currency_symbol})", 
+            min_value=0.0, step=100.0, format="%.2f")
+        additional_price = st.number_input(f"Additional Features & Enhancements ({currency_symbol})", 
+            min_value=0.0, step=100.0, format="%.2f")
 
     # Calculate totals
     total_price = ai_calling_price + crm_price + manychat_price + additional_price
-    annual_maintenance = total_price * 0.10  # Changed to 10% of total price
+    annual_maintenance = total_price * 0.10
 
-    # Display totals
-    st.subheader(f"Total Amount: ${total_price:,.2f}")
-    st.subheader(f"Annual Maintenance: ${annual_maintenance:,.2f}")
+    # Display totals with correct currency
+    st.subheader("Cost Summary")
+    st.write(f"Total Amount: {currency_symbol} {total_price:,.2f}")
+    st.write(f"Annual Maintenance: {currency_symbol} {annual_maintenance:,.2f}")
 
     if st.button("Generate Proposal"):
         if not client_name:
@@ -49,14 +64,14 @@ def render_ai_automation_without_lpw_form():
             "{Phone_no}": phone,
             "{country_name}": country,
             "{date}": proposal_date.strftime("%d/%m/%Y"),
-            "{sign_date}": proposal_date.strftime("%d/%m/%Y"),  # Added sign_date mapping
+            "{sign_date}": proposal_date.strftime("%d/%m/%Y"),
             "{validity_date}": validity_date.strftime("%d/%m/%Y"),
-            "{AI calling price}": f"$ {ai_calling_price:,.2f}",
-            "{CRM Automation price}": f"$ {crm_price:,.2f}",
-            "{Manychat price}": f"$ {manychat_price:,.2f}",
-            "{Total amount}": f"$ {total_price:,.2f}",
-            "{AM price}": f"$ {annual_maintenance:,.2f}",
-            "{Additional}": f"$ {additional_price:,.2f}"
+            "{AI calling price}": f"{currency_symbol} {ai_calling_price:,.2f}",
+            "{CRM Automation price}": f"{currency_symbol} {crm_price:,.2f}",
+            "{Manychat price}": f"{currency_symbol} {manychat_price:,.2f}",
+            "{Total amount}": f"{currency_symbol} {total_price:,.2f}",
+            "{AM price}": f"{currency_symbol} {annual_maintenance:,.2f}",
+            "{Additional}": f"{currency_symbol} {additional_price:,.2f}"
         }
         
         result = generate_proposal("AI Automation without LPW", client_name, replacements)
