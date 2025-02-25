@@ -41,17 +41,21 @@ def render_ai_automation_without_lpw_form():
     with col2:
         manychat_price = st.number_input(f"ManyChat & Make Automation ({currency_symbol})", 
             min_value=0.0, step=100.0, format="%.2f")
-        additional_price = st.number_input(f"Additional Features & Enhancements ({currency_symbol})", 
-            min_value=0.0, step=100.0, format="%.2f")
+        
+    # Additional Features as separate section
+    st.subheader("Additional Features")
+    additional_price = st.number_input(f"Additional Features & Enhancements ({currency_symbol})", 
+        min_value=0.0, step=100.0, format="%.2f")
 
-    # Calculate totals
-    total_price = ai_calling_price + crm_price + manychat_price + additional_price
+    # Calculate totals (excluding additional price)
+    total_price = ai_calling_price + crm_price + manychat_price
     annual_maintenance = total_price * 0.10
 
     # Display totals with correct currency
     st.subheader("Cost Summary")
     st.write(f"Total Amount: {currency_symbol} {total_price:,.2f}")
     st.write(f"Annual Maintenance: {currency_symbol} {annual_maintenance:,.2f}")
+    st.write(f"Additional Features: {currency_symbol} {additional_price:,.2f}")
 
     if st.button("Generate Proposal"):
         if not client_name:
