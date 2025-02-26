@@ -47,14 +47,18 @@ def render_ai_automation_without_lpw_form():
     additional_price = st.number_input(f"Additional Features & Enhancements ({currency_symbol})", 
         min_value=0.0, step=100.0, format="%.2f")
 
-    # Calculate totals (excluding additional price)
-    total_price = ai_calling_price + crm_price + manychat_price
-    annual_maintenance = total_price * 0.10
+    # Calculate subtotal (excluding additional price)
+    subtotal = ai_calling_price + crm_price + manychat_price
+    annual_maintenance = subtotal * 0.10
+    
+    # Calculate total including annual maintenance
+    total_price = subtotal + annual_maintenance
 
     # Display totals with correct currency
     st.subheader("Cost Summary")
-    st.write(f"Total Amount: {currency_symbol} {total_price:,.2f}")
+    st.write(f"Subtotal: {currency_symbol} {subtotal:,.2f}")
     st.write(f"Annual Maintenance: {currency_symbol} {annual_maintenance:,.2f}")
+    st.write(f"Total Amount: {currency_symbol} {total_price:,.2f}")
     st.write(f"Additional Features: {currency_symbol} {additional_price:,.2f}")
 
     if st.button("Generate Proposal"):
